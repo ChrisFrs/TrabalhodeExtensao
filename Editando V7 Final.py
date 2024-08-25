@@ -559,16 +559,26 @@ while True:
                 
                 if evento_update == "Excluir":
                     confirmar_exclusao = sg.popup_yes_no('Deseja realmente excluir este registro?', title='Confirmação de Exclusão')
+                    
                     if confirmar_exclusao == 'Yes':
+                        # Realizar a exclusão
                         conn = sqlite3.connect('registros.db')
                         cursor = conn.cursor()
                         cursor.execute('DELETE FROM registros WHERE id=?', (dados[0],))
                         conn.commit()
                         conn.close()
                         sg.popup('Registro excluído com sucesso!')
+
+                        # Fecha a janela de atualização e exibe a janela principal
                         janela_atualizar_registro.close()
                         janela.un_hide()
+                    else:
+                        # Se o usuário escolheu "No", apenas fecha o popup de confirmação e retorna
+                        sg.popup('Exclusão cancelada.')
                         
+                        # Manter a janela de atualização aberta e retornar ao loop principal sem fechar
+                        continue  # Continua o loop principal sem fechar ou congelar a janela
+
                     # Atualizar a listbox de registros no Menu
                     janela['registros'].update(values=[f'{registro[0]} - {registro[1]}' for registro in get_registros()])
                     break
